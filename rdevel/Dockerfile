@@ -95,37 +95,11 @@ RUN cd /tmp/R-devel \
   && make install \
   && make clean
 
-## Set default CRAN repo to RStudio
-RUN echo 'options("repos"="http://cran.rstudio.com")' >> /usr/local/lib/R/etc/Rprofile.site
-
 # Useful packages -------------------------------------------------------------
-
-# Packages needed for full R CMD check
-RUN apt-get update -qq && apt-get install -t unstable -y --no-install-recommends \
-    aspell \
-    aspell-en \
-    ghostscript \
-    imagemagick \
-    lmodern
 
 # Common dev headers
 RUN apt-get update -qq && apt-get install -t unstable -y --no-install-recommends \
     libcairo2-dev \
-    libmysqlclient-dev \
-    libpq-dev \
-    libssl-dev \
-    libsqlite3-dev \
-    libxml2-dev
+    libxml2-dev \
+     r-cran-rgl
 
-# Install biocInstaller
-RUN R -q -e 'source("http://bioconductor.org/biocLite.R")'
-
-# Install devtools and all deps
-RUN install2.r -d TRUE --error devtools \
-  && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
-
-# Attach devtools and testthat to match my local env
-RUN echo 'if (interactive()) { \
-  suppressMessages(require(devtools)); \
-  suppressMessages(require(testthat)) \
-}' >> /usr/local/lib/R/etc/Rprofile.site
